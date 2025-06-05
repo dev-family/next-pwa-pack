@@ -1,6 +1,6 @@
-<!-- [![npm version](https://img.shields.io/npm/v/next-pwa-pack.svg?style=flat-square)](https://www.npmjs.com/package/next-pwa-pack)
+[![npm version](https://img.shields.io/npm/v/next-pwa-pack.svg?style=flat-square)](https://www.npmjs.com/package/next-pwa-pack)
 [![npm downloads](https://img.shields.io/npm/dm/next-pwa-pack.svg?style=flat-square)](https://www.npmjs.com/package/next-pwa-pack)
-[![license](https://img.shields.io/npm/l/next-pwa-pack.svg?style=flat-square)](./LICENSE) -->
+[![license](https://img.shields.io/npm/l/next-pwa-pack.svg?style=flat-square)](./LICENSE)
 
 [![GitHub](https://img.shields.io/badge/github-next--pwa--pack-blue?logo=github&style=flat-square)](https://github.com/dev-family/next-pwa-pack)
 
