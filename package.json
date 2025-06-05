@@ -1,0 +1,52 @@
+{
+  "name": "next-pwa-pack",
+  "author": "Andrew Murashko",
+  "version": "1.0.0",
+  "description": "PWA cache provider for Next.js/React apps (service worker, manifest, offline page, SPA cache, offline)",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "keywords": [
+    "pwa",
+    "service worker",
+    "manifest",
+    "offline",
+    "offline page",
+    "nextjs",
+    "react",
+    "cache"
+  ],
+  "license": "MIT",
+  "peerDependencies": {
+    "next": ">=12.0.0",
+    "react": ">=17.0.0"
+  },
+  "dependencies": {
+    "inquirer": "^9.2.16"
+  },
+  "files": [
+    "dist",
+    "sw.js",
+    "manifest.json",
+    "offline.html",
+    "scripts"
+  ],
+  "scripts": {
+    "build": "tsc && npm run build:min && npm run build:post",
+    "build:min": "node ./scripts/minify-dist.js",
+    "build:post": "node ./scripts/add-use-client.js",
+    "copy-pwa-files": "node ./scripts/copy-pwa-files.mjs",
+    "postinstall": "npm run copy-pwa-files"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3",
+    "terser": "^5.30.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dev-family/next-pwa-pack.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dev-family/next-pwa-pack/issues"
+  },
+  "homepage": "https://github.com/dev-family/next-pwa-pack#readme"
+}

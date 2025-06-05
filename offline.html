@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>No Connection</title>
+    <style>
+      body {
+        background: #222;
+        color: #fff;
+        font-family: sans-serif;
+        text-align: center;
+        padding: 40px;
+      }
+      .btn {
+        margin-top: 20px;
+        padding: 10px 20px;
+        font-size: 18px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>No Internet Connection</h1>
+    <p>Please connect to the internet and refresh the page.</p>
+    <button class="btn" onclick="location.reload()">Refresh</button>
+    <script>
+      // If connection is restored, reload automatically
+      window.addEventListener("online", () => location.reload());
+    </script>
+  </body>
+</html>

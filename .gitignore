@@ -1,0 +1,27 @@
+# Node.js
+node_modules/
+
+# Build output
+dist/
+
+# MacOS
+.DS_Store
+
+# Env files
+.env*
+
+# npm pack output
+*.tgz
+
+# Yarn
+.yarn-integrity
+
+# Logs
+logs/
+*.log
+
+# Optional: npm/yarn lock (обычно оставляют, но если не нужен — раскомментируйте)
+# yarn.lock
+
+# Ignore npmignore if not needed
+.npmignore 
