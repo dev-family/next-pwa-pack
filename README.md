@@ -68,8 +68,6 @@ When you install the package, PWA files (`sw.js`, `manifest.json`, `offline.html
 
 ---
 
-
-
 ## 🛠️ Customization
 
 ### Manifest.json
@@ -161,6 +159,26 @@ import {
 - `updateSWCache(urls)` — update cache for multiple pages in all tabs
 - `disablePWACache()` — temporarily disable cache (until reload)
 - `enablePWACache()` — re-enable cache
+
+---
+
+### Cache revalidation after mutations
+
+If you update data on the server (e.g., via POST/PUT/DELETE), you may need to revalidate the cache for affected pages. This is especially important for SSR/ISR/SSG pages or when using SW caching in a PWA.
+
+You can use `updateSWCache` to force cache update for specific URLs after a mutation. For example, after a successful API call:
+
+```ts
+import { updateSWCache } from "next-pwa-pack";
+
+// After your mutation or revalidateTag
+await fetch("/api/your-endpoint", { method: "POST", body: ... });
+// Optionally, revalidate Next.js tag here
+// await revalidateTag("your-tag");
+updateSWCache(["/your-page-url"]);
+```
+
+This will update the cache for the specified pages in all open tabs.
 
 ---
 
