@@ -1,15 +1,32 @@
-[![npm version](https://img.shields.io/npm/v/next-pwa-pack.svg?style=flat-square)](https://www.npmjs.com/package/next-pwa-pack)
-[![npm downloads](https://img.shields.io/npm/dm/next-pwa-pack.svg?style=flat-square)](https://www.npmjs.com/package/next-pwa-pack)
-[![license](https://img.shields.io/npm/l/next-pwa-pack.svg?style=flat-square)](./LICENSE)
+<p align="center">
+   <a href="https://github.com/dev-family/next-pwa-pack">
+    <img src="https://img.shields.io/badge/github-next--pwa--pack-643add?logo=github&style=flat-square?color=643add&labelColor=86ce2c" alt="Version" />
+  </a>
+   <a href="https://www.npmjs.com/package/next-pwa-pack">
+    <img src="https://img.shields.io/npm/v/next-pwa-pack.svg?color=643add&labelColor=86ce2c" alt="Version" />
+  </a>
+  <a href="https://www.npmjs.com/package/next-pwa-pack">
+    <img src="https://img.shields.io/npm/dm/next-pwa-pack.svg?color=643add&labelColor=86ce2c" alt="Downloads" />
+  </a>
+  <a href="https://opensource.org/licenses/MIT">
+    <img src="https://img.shields.io/npm/l/next-pwa-pack.svg?color=643add&labelColor=86ce2c" alt="License" />
+  </a>
+</p>
 
-[![GitHub](https://img.shields.io/badge/github-next--pwa--pack-blue?logo=github&style=flat-square)](https://github.com/dev-family/next-pwa-pack)
+<br />
 
-[Читать на русском](./README.ru.md)
+<p align="center">
+  <a target='_blank' href="https://admiral.dev.family">
+    <img src="/preview.jpg" alt="Admiral Administration panel" />
+  </a>
+</p>
 
-# next-pwa-pack
+<br />
 
 **PWA cache provider for Next.js.**  
 Automatically registers a service worker, caches pages and static assets, adds a PWA manifest and offline page, supports offline mode, SPA navigation, and advanced dev tools.
+
+Made with :purple_heart: by [dev.family](https://dev.family/?utm_source=github&utm_medium=pwa&utm_campaign=readme)
 
 ---
 
@@ -212,10 +229,29 @@ const CACHE_EXCLUDE = ["/api/", "/admin"];
   node node_modules/next-pwa-pack/scripts/copy-pwa-files.mjs
   ```
 
----
-
 ## 📦 Exported components
 
 - `PWAProvider` — wrapper for the application
 - `PWAProvider` — status hook
 - All utilities for cache and SW management
+
+  
+## 🏆 How can I support the developers?
+
+-   Star our GitHub repo ⭐
+-   Create pull requests, submit bugs, suggest new features or documentation updates 🔧
+-   Read us on [Medium](https://medium.com/@dev.family)
+-   Follow us on [Twitter](https://twitter.com/dev___family) 🐾
+-   Like our page on [LinkedIn](https://www.linkedin.com/company/dev-family) 👍
+
+## 🤝 Contributing
+
+If you want to participate in the development, make a Fork of the repository, make the desired changes and send a pull request. We will be glad to consider your suggestions!
+
+## ©️ License
+
+This library is distributed under the MIT license.
+
+
+---
+
