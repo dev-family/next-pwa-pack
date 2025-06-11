@@ -16,9 +16,7 @@
 <br />
 
 <p align="center">
-  <a target='_blank' href="https://admiral.dev.family">
     <img src="/preview.jpg" alt="Admiral Administration panel" />
-  </a>
 </p>
 
 <br />
