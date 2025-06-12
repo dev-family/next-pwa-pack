@@ -230,7 +230,7 @@ const CACHE_EXCLUDE = ["/api/", "/admin"];
 ## 📦 Exported components
 
 - `PWAProvider` — wrapper for the application
-- `PWAProvider` — status hook
+- `usePWAStatus` — status hook
 - All utilities for cache and SW management
 
   
