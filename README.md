@@ -142,6 +142,7 @@ In `config.matcher`, be sure to specify the paths that should be handled by this
     updateSWCache,
     disablePWACache,
     enablePWACache,
+    clearStaticCache
   } from "next-pwa-pack/client-actions";
   ```
 
@@ -152,6 +153,7 @@ In `config.matcher`, be sure to specify the paths that should be handled by this
   - `updateSWCache(urls)` — update cache for multiple pages in all tabs
   - `disablePWACache()` — temporarily disable cache (until reload)
   - `enablePWACache()` — re-enable cache
+  - `clearStaticCache()` - clears the static resource cache
 
 ---
 
