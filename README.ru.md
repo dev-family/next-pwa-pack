@@ -107,6 +107,7 @@ import {
   updateSWCache,
   disablePWACache,
   enablePWACache,
+  clearStaticCache
 } from "next-pwa-pack/client-actions";
 ```
 
@@ -117,6 +118,8 @@ import {
 - `updateSWCache(urls)` — обновить кэш для нескольких страниц во всех вкладках
 - `disablePWACache()` — временно отключить кэш (до перезагрузки)
 - `enablePWACache()` — включить кэш обратно
+- `clearStaticCache()` - очищает кэш статических ресурсов
+
 
 ---
 
