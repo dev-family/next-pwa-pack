@@ -1,7 +1,7 @@
 {
   "name": "next-pwa-pack",
   "author": "Andrew Murashko",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "PWA cache provider for Next.js/React apps (service worker, manifest, offline page, SPA cache, offline)",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -28,14 +28,16 @@
     "sw.js",
     "manifest.json",
     "offline.html",
-    "scripts"
+    "scripts",
+    "src/client-actions.ts"
   ],
   "scripts": {
     "build": "tsc && npm run build:min && npm run build:post",
     "build:min": "node ./scripts/minify-dist.js",
     "build:post": "node ./scripts/add-use-client.js",
     "copy-pwa-files": "node ./scripts/copy-pwa-files.mjs",
-    "postinstall": "npm run copy-pwa-files"
+    "copy-pwa-server-actions": "node ./scripts/copy-pwa-server-actions.mjs",
+    "postinstall": "npm run copy-pwa-files && npm run copy-pwa-server-actions"
   },
   "devDependencies": {
     "typescript": "^5.8.3",

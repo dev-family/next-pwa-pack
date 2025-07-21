@@ -21,8 +21,10 @@
 
 <br />
 
+# next-pwa-pack
+
 **PWA cache provider for Next.js.**  
-Automatically registers a service worker, caches pages and static assets, adds a PWA manifest and offline page, supports offline mode, SPA navigation, and advanced dev tools.
+Automatically registers a service worker, caches pages and static assets, adds a PWA manifest and offline page, supports offline mode, SPA navigation, advanced dev tools, and both server and client actions for cache management.
 
 Made with :purple_heart: by [dev.family](https://dev.family/?utm_source=github&utm_medium=pwa&utm_campaign=readme)
 
@@ -43,14 +45,23 @@ Made with :purple_heart: by [dev.family](https://dev.family/?utm_source=github&u
    - `public/sw.js`
    - `public/manifest.json`
    - `public/offline.html`
+   - A file with the server action `revalidatePWA` will also be automatically created or updated: `app/actions.ts` or `src/app/actions.ts` (if you use a `src` folder structure).
 
-     2.1 **If for some reason the files were not copied,** run the command:
+   If the files did not appear, run:
 
    ```bash
    node node_modules/next-pwa-pack/scripts/copy-pwa-files.mjs
-   or
+   # or
    npx next-pwa-pack/scripts/copy-pwa-files.mjs
    ```
+
+   If the server action did not appear, run:
+
+   ```bash
+   node node_modules/next-pwa-pack/scripts/copy-pwa-server-actions.mjs
+   ```
+
+   This script will create or update `app/actions.ts` or `src/app/actions.ts` with the `revalidatePWA` function for server-side cache revalidation.
 
 3. **Wrap your app with the provider:**
 
@@ -68,18 +79,93 @@ Made with :purple_heart: by [dev.family](https://dev.family/?utm_source=github&u
 
 ---
 
-## Installation & Setup
+## HOC withPWA
 
-When you install the package, PWA files (`sw.js`, `manifest.json`, `offline.html`) are automatically copied to the `public` directory.
+If you use SSR/Edge middleware or want to trigger server actions (e.g., for cache revalidation on the server), use the HOC:
 
-- To copy files again, run:
-  ```bash
-  node node_modules/next-pwa-pack/scripts/copy-pwa-files.mjs
-   or
-   npx next-pwa-pack/scripts/copy-pwa-files.mjs
+```ts
+// /middleware.ts
+import { withPWA } from "next-pwa-pack";
+
+function originalMiddleware(request) {
+  // ...your logic
+  return response;
+}
+
+export default withPWA(originalMiddleware, {
+  revalidationSecret: process.env.REVALIDATION_SECRET!,
+  sseEndpoint: "/api/pwa/cache-events",
+  webhookPath: "/api/pwa/revalidate",
+});
+
+export const config = {
+  matcher: ["/", "/(ru|en)/:path*", "/api/pwa/:path*"],
+};
+```
+
+**HOC arguments:**
+
+- `originalMiddleware` — your middleware function (e.g., for i18n, auth, etc.)
+- `revalidationSecret` — secret for authorizing revalidation requests (required so only you can access it)
+- `sseEndpoint` — endpoint for SSE events (default `/api/pwa/cache-events`)
+- `webhookPath` — endpoint for webhook revalidation (default `/api/pwa/revalidate`)
+
+**Important:**
+In `config.matcher`, be sure to specify the paths that should be handled by this middleware (e.g., root, localized routes, and PWA endpoints).
+
+---
+
+## 📦 Export Structure
+
+- **Components**:
+
+  ```ts
+  import { PWAProvider, usePWAStatus } from "next-pwa-pack";
   ```
 
-> **Note:** The script will not overwrite files that already exist in the `public` directory. If you want to update a file, delete it first and then re-run the script.
+- **HOC**:
+
+  ```ts
+  import { withPWA } from "next-pwa-pack";
+  ```
+
+- **Client actions**:
+
+  Import from `next-pwa-pack/client-actions`:
+
+  ```ts
+  import {
+    clearAllCache,
+    reloadServiceWorker,
+    updatePageCache,
+    unregisterServiceWorkerAndClearCache,
+    updateSWCache,
+    disablePWACache,
+    enablePWACache,
+  } from "next-pwa-pack/client-actions";
+  ```
+
+  - `clearAllCache()` — clear all caches
+  - `reloadServiceWorker()` — reload the service worker and the page
+  - `updatePageCache(url?)` — update the cache for a page (current by default)
+  - `unregisterServiceWorkerAndClearCache()` — remove the service worker and cache
+  - `updateSWCache(urls)` — update cache for multiple pages in all tabs
+  - `disablePWACache()` — temporarily disable cache (until reload)
+  - `enablePWACache()` — re-enable cache
+
+---
+
+### Server actions
+
+After installing the package, your project will have (or update) a file `app/actions.ts` or `src/app/actions.ts` with the function:
+
+```ts
+export async function revalidatePWA(urls: string[]) {
+  // ...
+}
+```
+
+Call it from server actions, server components, or API routes to trigger PWA cache revalidation by URL.
 
 ---
 
@@ -108,10 +194,11 @@ After installing the package, a basic manifest will appear in `public/manifest.j
 
 ### Service Worker Path
 
-- You can specify a custom path via the `swPath` prop:
-  ```tsx
-  <PWAProvider swPath="/custom-sw.js">{children}</PWAProvider>
-  ```
+You can specify a custom path via the `swPath` prop:
+
+```tsx
+<PWAProvider swPath="/custom-sw.js">{children}</PWAProvider>
+```
 
 ---
 
@@ -153,47 +240,93 @@ const { online, hasUpdate, swInstalled, update } = usePWAStatus();
 
 ---
 
-### Utilities for cache and SW management
+### Cache revalidation after mutations
+
+If you update data on the server (e.g., via POST/PUT/DELETE), use:
+
+- `revalidateTag` (Next.js)
+- `revalidatePWA` (server action)
+- or `updateSWCache` (client action)
+
+Example:
 
 ```ts
-import {
-  clearAllCache,
-  reloadServiceWorker,
-  updatePageCache,
-  unregisterServiceWorkerAndClearCache,
-  updateSWCache,
-  disablePWACache,
-  enablePWACache,
-} from "next-pwa-pack";
+// server action
+await revalidateTag("your-tag");
+await revalidatePWA(["/your-page-url"]);
 ```
-
-- `clearAllCache()` — clear all caches
-- `reloadServiceWorker()` — reload the service worker and the page
-- `updatePageCache(url?)` — update the cache for a page (current by default)
-- `unregisterServiceWorkerAndClearCache()` — remove the service worker and cache
-- `updateSWCache(urls)` — update cache for multiple pages in all tabs
-- `disablePWACache()` — temporarily disable cache (until reload)
-- `enablePWACache()` — re-enable cache
 
 ---
 
-### Cache revalidation after mutations
+### Example: API route for external revalidation (e.g., from admin panel)
 
-If you update data on the server (e.g., via POST/PUT/DELETE), you may need to revalidate the cache for affected pages. This is especially important for SSR/ISR/SSG pages or when using SW caching in a PWA.
-
-You can use `updateSWCache` to force cache update for specific URLs after a mutation. For example, after a successful API call:
+You can create your own API route to trigger cache revalidation by tags and/or URLs from outside (e.g., from an admin panel or another service):
 
 ```ts
-import { updateSWCache } from "next-pwa-pack";
+// app/api/webhook/revalidate/route.ts
+import { NextRequest, NextResponse } from "next/server";
+import { revalidateByTag, revalidatePWA } from "@/app/actions";
+import { FetchTags } from "@/app/api/endpoints/backend";
 
-// After your mutation or revalidateTag
-await fetch("/api/your-endpoint", { method: "POST", body: ... });
-// Optionally, revalidate Next.js tag here
-// await revalidateTag("your-tag");
-updateSWCache(["/your-page-url"]);
+export async function POST(request: NextRequest) {
+  try {
+    const { tags, secret, urls } = await request.json();
+
+    if (secret !== process.env.REVALIDATION_SECRET) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    let successful = 0;
+    let failed = 0;
+    let tagsRevalidated = false;
+    let urlsRevalidated = false;
+    const validTags = Object.values(FetchTags);
+    const invalidTags =
+      tags?.filter((tag) => !validTags.includes(tag as any)) || [];
+
+    if (invalidTags.length > 0) {
+      return NextResponse.json(
+        { error: `Invalid tags: ${invalidTags.join(", ")}` },
+        { status: 400 }
+      );
+    }
+
+    if (tags && tags.length > 0) {
+      const tagResults = await Promise.allSettled(
+        tags.map((tag) => revalidateByTag(tag as FetchTags))
+      );
+      successful = tagResults.filter((r) => r.status === "fulfilled").length;
+      failed = tagResults.filter((r) => r.status === "rejected").length;
+      tagsRevalidated = true;
+    }
+
+    if (urls && urls.length > 0) {
+      await revalidatePWA(urls);
+      urlsRevalidated = true;
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: "Cache revalidation completed",
+      tagsRevalidated,
+      urlsRevalidated,
+      tags: tags || [],
+      urls: urls || [],
+      successful,
+      failed,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (error) {
+    console.error("Webhook revalidation error:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}
 ```
 
-This will update the cache for the specified pages in all open tabs.
+Now you can send POST requests to `/api/webhook/revalidate` with the required tags, URLs, and secret — and trigger client cache updates from external systems.
 
 ---
 
@@ -226,30 +359,43 @@ const CACHE_EXCLUDE = ["/api/", "/admin"];
   ```bash
   node node_modules/next-pwa-pack/scripts/copy-pwa-files.mjs
   ```
+- **Server action did not appear?**  
+  Run the script manually to add the server action:
+  ```bash
+  node node_modules/next-pwa-pack/scripts/copy-pwa-server-actions.mjs
+  ```
+  This script will create or update `app/actions.ts` or `src/app/actions.ts` with the `revalidatePWA` function for server-side cache revalidation.
 
-## 📦 Exported components
+---
+
+## 📦 Exported components and actions
 
 - `PWAProvider` — wrapper for the application
 - `usePWAStatus` — status hook
-- All utilities for cache and SW management
+- All utilities for cache and SW management (client-actions)
+- HOC `withPWA` for SSR/Edge middleware
+- Server action `revalidatePWA` (automatically added to actions.ts)
 
-  
+---
+
 ## 🏆 How can I support the developers?
 
--   Star our GitHub repo ⭐
--   Create pull requests, submit bugs, suggest new features or documentation updates 🔧
--   Read us on [Medium](https://medium.com/@dev.family)
--   Follow us on [Twitter](https://twitter.com/dev___family) 🐾
--   Like our page on [LinkedIn](https://www.linkedin.com/company/dev-family) 👍
+- Star our GitHub repo ⭐
+- Create pull requests, submit bugs, suggest new features or documentation updates 🔧
+- Read us on [Medium](https://medium.com/@dev.family)
+- Follow us on [Twitter](https://twitter.com/dev___family) ��
+- Like our page on [LinkedIn](https://www.linkedin.com/company/dev-family) 👍
+
+---
 
 ## 🤝 Contributing
 
 If you want to participate in the development, make a Fork of the repository, make the desired changes and send a pull request. We will be glad to consider your suggestions!
 
+---
+
 ## ©️ License
 
 This library is distributed under the MIT license.
 
-
 ---
-

@@ -8,8 +8,8 @@ import {
   unregisterServiceWorkerAndClearCache,
   disablePWACache,
   enablePWACache,
-} from "./pwaActions";
-import { usePWAStatus } from "./usePWAStatus";
+} from "../pwaActions";
+import { usePWAStatus } from "../hooks/usePWAStatus";
 
 const toastStyle: React.CSSProperties = {
   position: "fixed",

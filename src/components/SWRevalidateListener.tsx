@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { updatePageCache } from "./pwaActions";
+import { updatePageCache } from "../pwaActions";
 
 export default function SWRevalidateListener() {
   useEffect(() => {

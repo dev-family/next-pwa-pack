@@ -84,6 +84,7 @@ export function signalSWRevalidate(urls: string[]) {
 export function updateSWCache(urls: string[]) {
   signalSWRevalidate(urls); // Signal for other tabs
   urls.forEach(updatePageCache); // Update cache in current tab
+  clearStaticCache(); // Clear static assets cache (API data)
 }
 
 /**
@@ -101,5 +102,20 @@ export function disablePWACache() {
 export function enablePWACache() {
   if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
     navigator.serviceWorker.controller.postMessage({ type: "ENABLE_CACHE" });
+  }
+}
+
+/**
+ * Clears static assets cache (API data, JSON responses, etc.)
+ * Useful for clearing cached API responses after revalidation.
+ */
+export function clearStaticCache() {
+  if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
+    console.log("[PWA] Sending CLEAR_STATIC_CACHE message to service worker");
+    navigator.serviceWorker.controller.postMessage({
+      type: "CLEAR_STATIC_CACHE",
+    });
+  } else {
+    console.warn("[PWA] Service worker not available for clearStaticCache");
   }
 }

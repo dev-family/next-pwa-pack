@@ -17,6 +17,7 @@ const MESSAGE_EVENT_TYPES = {
   REVALIDATE_URL: "REVALIDATE_URL",
   DISABLE_CACHE: "DISABLE_CACHE",
   ENABLE_CACHE: "ENABLE_CACHE",
+  CLEAR_STATIC_CACHE: "CLEAR_STATIC_CACHE",
 };
 
 // Check: is it HTML
@@ -146,6 +147,26 @@ self.addEventListener("message", (event) => {
         console.error("[SW] Failed to revalidate cache for:", url, err);
       }
     });
+  }
+
+  // Clear static assets cache (for API data revalidation)
+  if (type === MESSAGE_EVENT_TYPES.CLEAR_STATIC_CACHE) {
+    console.log("[SW] Received CLEAR_STATIC_CACHE message");
+    caches
+      .open(STATIC_ASSETS_CACHE)
+      .then(async (cache) => {
+        const keys = await cache.keys();
+        console.log(
+          "[SW] Found",
+          keys.length,
+          "entries in static assets cache"
+        );
+        await Promise.all(keys.map((key) => cache.delete(key)));
+        console.log("[SW] Cleared static assets cache");
+      })
+      .catch((err) => {
+        console.error("[SW] Error clearing static assets cache:", err);
+      });
   }
 
   // SPA: manually cache HTML, but only if TTL has expired or there is no cache
